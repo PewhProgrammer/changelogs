@@ -1,0 +1,25 @@
+{
+  "version": "0.1.0",
+  "date": "2026-07-17",
+  "title": "Events timeline, running journal and vacation calendar",
+  "repo": "plain-personal",
+  "summary": "First release of the personal dashboard: a timeline of life events, a running journal fed by Garmin data, and a vacation calendar.",
+  "tags": ["new"],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Events timeline collecting personal milestones in one place",
+        "Running journal backed by Garmin activity data",
+        "Vacation calendar with public holidays",
+        "Daily quotes on the dashboard"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit de515f7",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/de515f75a0e46c34bfb8abb2ca0a3083d5a027c0"
+    }
+  ]
+}

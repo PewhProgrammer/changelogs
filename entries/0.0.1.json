@@ -1,0 +1,22 @@
+{
+  "version": "0.0.1",
+  "date": "2026-03-31",
+  "title": "Rocky agent first cut",
+  "repo": "rocky-agent",
+  "summary": "Initial implementation of the Rocky agent.",
+  "tags": ["new"],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Initial Rocky agent implementation"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit c7ff186",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/c7ff186efa86307e6b7b7db69e43fcd46c14c496"
+    }
+  ]
+}

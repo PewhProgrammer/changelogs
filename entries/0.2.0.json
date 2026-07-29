@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "date": "2026-07-23",
+  "title": "Cozy office embedded in the dashboard",
+  "repo": "plain-personal",
+  "summary": "The cozy office scene now lives inside the dashboard as a route instead of being a separate page.",
+  "tags": ["new", "improved"],
+  "image": "assets/0.2.0-cozy-office.png",
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Cozy office embedded as an iframe route in the Vue layout"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Fullscreen starts automatically when arriving from the dashboard",
+        "Fullscreen preference persists between visits",
+        "Back button returns to the dashboard"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit dc7ebb3",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/dc7ebb390fa3ab0ad1868e40e3b44adb95712d3f"
+    },
+    {
+      "label": "Commit f3e7b22",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/f3e7b227ac33b733d83e148286dcd6ff042b6d10"
+    },
+    {
+      "label": "Commit 9aed3b5",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/9aed3b50ad8f05b313046ca12bb193226b547ede"
+    }
+  ]
+}
