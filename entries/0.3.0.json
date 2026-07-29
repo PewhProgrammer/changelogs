@@ -5,6 +5,7 @@
   "repo": "plain-personal",
   "summary": "Race efforts embedded inside longer runs now count as personal records.",
   "tags": ["new", "improved", "fixed"],
+  "image": "assets/0.3.0-running-prs.jpg",
   "sections": [
     {
       "heading": "New",

@@ -1,0 +1,36 @@
+{
+  "version": "0.0.2",
+  "date": "2026-06-22",
+  "title": "Rocky adopts plain-internal-agent practices",
+  "repo": "rocky-agent",
+  "summary": "Engineering practices from the work agent applied to Rocky: fast Slack acks, tests, linting and a proper reply pipeline.",
+  "tags": ["improved", "fixed"],
+  "sections": [
+    {
+      "heading": "Improved",
+      "items": [
+        "Async ack: a fast Slack handler verifies and acks within Slack's 3 second window, then hands off to an async worker via fire and forget Lambda invoke",
+        "Bot user id cached per cold start instead of one auth.test per event",
+        "Markdown to Slack mrkdwn converter for agent replies",
+        "Biome lint and format plus a Vitest suite covering signature verification, prompt building and memory trimming"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Dead TMDB config wired to a real secret so movie tools register",
+        "Numeric tool args accepted as number or string"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit 6c873f9",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/6c873f9d133eaac5aed863bc2efd12dd806628c8"
+    },
+    {
+      "label": "Commit adb9046",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/adb904613b37035b0221d57a5510cfdc6eb26711"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "version": "0.1.1",
+  "date": "2026-07-18",
+  "title": "Assistant panel, scheduled jobs and research tools",
+  "repo": "rocky-agent",
+  "summary": "Rocky grows a Slack assistant side panel, cron scheduled jobs from pinned messages, and a wider tool belt.",
+  "tags": ["new", "improved"],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Slack assistant side panel",
+        "Cron based scheduled jobs created from pinned messages",
+        "Hacker News search tool",
+        "Gmail filter management",
+        "Authenticated Reddit OAuth support"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "LLM switched to openai/gpt-oss-20b on Groq"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit 6668150",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/666815019c580f0eee0b083066578cc2b11e9176"
+    }
+  ]
+}

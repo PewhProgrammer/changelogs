@@ -1,0 +1,50 @@
+{
+  "version": "0.4.0",
+  "date": "2026-07-29",
+  "title": "Typst letters, document pipeline and Bedrock agent",
+  "repo": "rocky-agent",
+  "summary": "Rocky writes DIN 5008 letters as PDFs straight into the Slack thread, ingests and reconciles documents, and now runs its agent loop on Bedrock.",
+  "tags": ["new", "improved", "fixed"],
+  "image": "assets/0.4.0-typst-letter.jpg",
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "generate_letter tool renders DIN 5008 form B PDFs via Typst and posts them into the Slack thread as drafts, with three templates: allgemein, Mieterhöhung, Mahnung",
+        "Document pipeline: upload, OCR, classify, search, compare and reconcile, filed in the docs bucket alongside inbound documents",
+        "Scheduled jobs can run compound web research",
+        "Interests scoring and a story log"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Agent loop moved from Groq to Bedrock (100M TPM at the same model cost)",
+        "Slack replies use informal German and skip markdown tables",
+        "Letter values pass through a single escaped interpolation point; the layout itself is a static string"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Linux Typst binary vendored so letter rendering works on Lambda",
+        "generate_letter accepts an explicit recipient address",
+        "Tool results are logged, and Hacker News no longer stands in for non tech subreddits"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit 28a563c",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/28a563c9de625f856723d42c0bc08436be96868f"
+    },
+    {
+      "label": "Commit cc4bf19",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/cc4bf190ff756f6fba5b4c3f245412ba05e7a467"
+    },
+    {
+      "label": "Commit 545ef14",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/545ef1444e2a1496ec17677c3f9c1677099ea005"
+    }
+  ]
+}
