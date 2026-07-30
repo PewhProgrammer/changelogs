@@ -4,8 +4,9 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
-const entriesDir = path.join(root, 'entries')
-const assetsDir = path.join(entriesDir, 'assets')
+const dataDir = path.join(root, 'data')
+const monthsDir = path.join(dataDir, 'months')
+const assetsDir = path.join(dataDir, 'assets')
 const siteDir = path.join(root, 'site')
 
 const schema = JSON.parse(await readFile(path.join(root, 'schema', 'entry.schema.json'), 'utf8'))
@@ -14,7 +15,7 @@ const knownFields = Object.keys(schema.properties)
 const allowedTags = schema.properties.tags.items.enum
 
 const errors = []
-const fail = (file, message) => errors.push(`entries/${file}: ${message}`)
+const fail = (label, message) => errors.push(`${label}: ${message}`)
 
 const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0
 const isPlainObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -35,72 +36,107 @@ async function fileExists(target) {
   }
 }
 
-const files = (await readdir(entriesDir)).filter((name) => name.endsWith('.json')).sort()
-if (files.length === 0) {
-  console.error('entries/: no *.json entry files found')
+let monthDirents
+try {
+  monthDirents = await readdir(monthsDir, { withFileTypes: true })
+} catch {
+  console.error('data/months: directory not found')
+  process.exit(1)
+}
+
+const months = []
+for (const dirent of monthDirents) {
+  if (dirent.name.startsWith('.')) continue
+  if (dirent.isDirectory() && /^\d{4}-\d{2}$/.test(dirent.name)) {
+    months.push(dirent.name)
+  } else {
+    fail(`data/months/${dirent.name}`, 'only YYYY-MM month directories belong here')
+  }
+}
+months.sort()
+
+const files = []
+for (const month of months) {
+  for (const name of (await readdir(path.join(monthsDir, month))).sort()) {
+    if (name.startsWith('.')) continue
+    if (name.endsWith('.json')) {
+      files.push({ month, name })
+    } else {
+      fail(`data/months/${month}/${name}`, 'only <version>.json entry files belong here')
+    }
+  }
+}
+
+if (files.length === 0 && errors.length === 0) {
+  console.error('data/months: no *.json entry files found')
   process.exit(1)
 }
 
 const entries = []
 const seenVersions = new Map()
 
-for (const file of files) {
+for (const { month, name } of files) {
+  const label = `data/months/${month}/${name}`
   let entry
   try {
-    entry = JSON.parse(await readFile(path.join(entriesDir, file), 'utf8'))
+    entry = JSON.parse(await readFile(path.join(monthsDir, month, name), 'utf8'))
   } catch (error) {
-    fail(file, `invalid JSON (${error.message})`)
+    fail(label, `invalid JSON (${error.message})`)
     continue
   }
 
   if (!isPlainObject(entry)) {
-    fail(file, 'entry must be a JSON object')
+    fail(label, 'entry must be a JSON object')
     continue
   }
 
   for (const field of requiredFields) {
-    if (!isNonEmptyString(entry[field])) fail(file, `missing required field "${field}"`)
+    if (!isNonEmptyString(entry[field])) fail(label, `missing required field "${field}"`)
   }
   for (const key of Object.keys(entry)) {
-    if (!knownFields.includes(key)) fail(file, `unknown field "${key}"`)
+    if (!knownFields.includes(key)) fail(label, `unknown field "${key}"`)
   }
 
-  if (isNonEmptyString(entry.version) && entry.version !== path.basename(file, '.json')) {
-    fail(file, `version "${entry.version}" does not match filename`)
+  if (isNonEmptyString(entry.version) && entry.version !== path.basename(name, '.json')) {
+    fail(label, `version "${entry.version}" does not match filename`)
   }
 
-  if (isNonEmptyString(entry.date) && !isRealDate(entry.date)) {
-    fail(file, `date "${entry.date}" is not a valid YYYY-MM-DD date`)
+  if (isNonEmptyString(entry.date)) {
+    if (!isRealDate(entry.date)) {
+      fail(label, `date "${entry.date}" is not a valid YYYY-MM-DD date`)
+    } else if (entry.date.slice(0, 7) !== month) {
+      fail(label, `date "${entry.date}" does not match month folder "${month}"`)
+    }
   }
 
   for (const field of ['repo', 'summary']) {
     if (entry[field] !== undefined && !isNonEmptyString(entry[field])) {
-      fail(file, `${field} must be a non-empty string`)
+      fail(label, `${field} must be a non-empty string`)
     }
   }
 
   if (entry.tags !== undefined) {
     if (!Array.isArray(entry.tags)) {
-      fail(file, 'tags must be an array')
+      fail(label, 'tags must be an array')
     } else {
       for (const tag of entry.tags) {
-        if (!allowedTags.includes(tag)) fail(file, `unknown tag "${tag}" (allowed: ${allowedTags.join(', ')})`)
+        if (!allowedTags.includes(tag)) fail(label, `unknown tag "${tag}" (allowed: ${allowedTags.join(', ')})`)
       }
-      if (new Set(entry.tags).size !== entry.tags.length) fail(file, 'tags must be unique')
+      if (new Set(entry.tags).size !== entry.tags.length) fail(label, 'tags must be unique')
     }
   }
 
   if (entry.image !== undefined) {
     if (!isNonEmptyString(entry.image) || !entry.image.startsWith('assets/')) {
-      fail(file, 'image must be a path under assets/')
-    } else if (!(await fileExists(path.join(entriesDir, entry.image)))) {
-      fail(file, `image "${entry.image}" not found in entries/`)
+      fail(label, 'image must be a path under assets/')
+    } else if (!(await fileExists(path.join(dataDir, entry.image)))) {
+      fail(label, `image "${entry.image}" not found in data/`)
     }
   }
 
   if (entry.sections !== undefined) {
     if (!Array.isArray(entry.sections)) {
-      fail(file, 'sections must be an array')
+      fail(label, 'sections must be an array')
     } else {
       entry.sections.forEach((section, index) => {
         const valid =
@@ -109,14 +145,14 @@ for (const file of files) {
           Array.isArray(section.items) &&
           section.items.length > 0 &&
           section.items.every(isNonEmptyString)
-        if (!valid) fail(file, `sections[${index}] must be { heading, items } with non-empty strings`)
+        if (!valid) fail(label, `sections[${index}] must be { heading, items } with non-empty strings`)
       })
     }
   }
 
   if (entry.links !== undefined) {
     if (!Array.isArray(entry.links)) {
-      fail(file, 'links must be an array')
+      fail(label, 'links must be an array')
     } else {
       entry.links.forEach((link, index) => {
         const valid =
@@ -124,16 +160,16 @@ for (const file of files) {
           isNonEmptyString(link.label) &&
           isNonEmptyString(link.url) &&
           /^https?:\/\//.test(link.url)
-        if (!valid) fail(file, `links[${index}] must be { label, url } with an http(s) url`)
+        if (!valid) fail(label, `links[${index}] must be { label, url } with an http(s) url`)
       })
     }
   }
 
   if (isNonEmptyString(entry.version)) {
     if (seenVersions.has(entry.version)) {
-      fail(file, `duplicate version "${entry.version}" (also in ${seenVersions.get(entry.version)})`)
+      fail(label, `duplicate version "${entry.version}" (also in ${seenVersions.get(entry.version)})`)
     } else {
-      seenVersions.set(entry.version, file)
+      seenVersions.set(entry.version, `data/months/${month}/${name}`)
     }
   }
 

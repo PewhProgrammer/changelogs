@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/PewhProgrammer/changelogs/blob/main/schema/entry.schema.json",
   "title": "Changelog entry",
-  "description": "One released version. File must be named <version>.json and live in entries/.",
+  "description": "One released version. File must be named <version>.json and live in data/months/<YYYY-MM>/ matching the date field.",
   "type": "object",
   "required": ["version", "date", "title"],
   "additionalProperties": false,
@@ -41,7 +41,7 @@
     "image": {
       "type": "string",
       "pattern": "^assets/",
-      "description": "Screenshot path relative to entries/, e.g. assets/0.2.0-shot.png"
+      "description": "Screenshot path relative to data/, e.g. assets/0.2.0-shot.png"
     },
     "sections": {
       "type": "array",

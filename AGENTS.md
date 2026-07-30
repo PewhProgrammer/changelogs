@@ -6,18 +6,18 @@ This repository is the changelog for my personal projects. If you are reading th
 
 ```bash
 node scripts/new-entry.mjs <version>
-# edit entries/<version>.json
+# edit data/months/<YYYY-MM>/<version>.json
 node scripts/build.mjs
-git add entries/ && git commit && git push
+git add data/ && git commit && git push
 ```
 
 No `npm install`. The scripts have zero dependencies and need Node 18 or newer.
 
 ## Picking a Version
 
-- List `entries/` and match the existing scheme (currently `0.x.y`). Feature work bumps minor, a batch of small fixes bumps patch.
+- List `data/months/` and match the existing scheme (currently `0.x.y`). Feature work bumps minor, a batch of small fixes bumps patch.
 - Versions are unique across all repos; the changelog is one shared version line, not one line per repo.
-- The filename must equal the `version` field (`0.5.0.json` contains `"version": "0.5.0"`). The build rejects mismatches and duplicates.
+- The filename must equal the `version` field (`0.5.0.json` contains `"version": "0.5.0"`), and the file lives in the month folder matching its `date` (`data/months/2026-08/0.5.0.json`). `new-entry.mjs` puts it in the right place; the build rejects mismatches, wrong month folders and duplicates.
 - The site sorts by `date` descending with semver as the tiebreak, so multiple entries on one day are fine.
 
 ## Filling the Entry
@@ -53,7 +53,7 @@ Example:
 
 ## Screenshots
 
-Optional but valuable. Put the file in `entries/assets/`, name it `<version>-<slug>.jpg`, reference it as `"image": "assets/<version>-<slug>.jpg"`. The build fails if the file does not exist.
+Optional but valuable. Put the file in `data/assets/`, name it `<version>-<slug>.jpg`, reference it as `"image": "assets/<version>-<slug>.jpg"`. The build fails if the file does not exist.
 
 Rules, in priority order:
 
@@ -67,7 +67,7 @@ Rules, in priority order:
 node scripts/build.mjs
 ```
 
-Must exit 0. It checks required fields, date validity, the tag set, filename versus version, duplicates, unknown fields, and that the image exists. It also writes `site/entries.json` and copies `site/assets/`; both are gitignored build output. Never commit them and never edit them by hand.
+Must exit 0. It checks required fields, date validity, the tag set, filename versus version, the month folder versus the date, duplicates, unknown fields, and that the image exists. It also writes `site/entries.json` and copies `site/assets/`; both are gitignored build output. Never commit them and never edit them by hand.
 
 Preview if you want to look at it:
 
@@ -77,7 +77,7 @@ node scripts/build.mjs && python3 -m http.server 8000 -d site
 
 ## Committing
 
-- Commit only files under `entries/`.
+- Commit only files under `data/`.
 - A branch plus PR to `main` is the default; a direct commit to `main` is acceptable for a single clean entry if you have push access.
 - Commit message in the style of `feat: add 0.5.0 entry for plain-personal run planner`.
 

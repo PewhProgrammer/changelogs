@@ -1,6 +1,6 @@
 # changelogs
 
-A changelog site with zero build tooling. Every released version is one JSON file in `entries/`; a small Node script compiles them into a static page in `site/`.
+A changelog site with zero build tooling. Every released version is one JSON file under `data/months/<YYYY-MM>/`; a small Node script compiles them into a static page in `site/`.
 
 ## Quick Start
 
@@ -16,13 +16,13 @@ Then open http://localhost:8000. Requires Node 18 or newer, no `npm install`.
 node scripts/new-entry.mjs 0.4.0
 ```
 
-This scaffolds `entries/0.4.0.json` with today's date. Fill it in, then run `node scripts/build.mjs`. The build validates every entry and fails loudly, naming the offending file, rather than silently dropping a malformed one.
+This scaffolds `data/months/<current month>/0.4.0.json` with today's date. Fill it in, then run `node scripts/build.mjs`. The build validates every entry and fails loudly, naming the offending file, rather than silently dropping a malformed one.
 
 When something ships in another repo, that repo adds one JSON file here (the `repo` field records where it came from). Automating that cross repo append is phase 2.
 
 ## Entry Format
 
-One file per version, named `<version>.json`. The full schema lives in `schema/entry.schema.json`.
+One file per version, named `<version>.json`, filed under the month folder matching its `date` (`data/months/2026-07/0.3.0.json`). The full schema lives in `schema/entry.schema.json`.
 
 ```json
 {
@@ -44,26 +44,27 @@ One file per version, named `<version>.json`. The full schema lives in `schema/e
 | Field | Required | Notes |
 | --- | --- | --- |
 | `version` | yes | Must match the filename |
-| `date` | yes | `YYYY-MM-DD`, the sort key (newest first, semver breaks ties) |
+| `date` | yes | `YYYY-MM-DD`, the sort key (newest first, semver breaks ties); must match the month folder |
 | `title` | yes | One line headline |
 | `repo` | no | Which repo shipped it; powers the repository filter pills and `?repo=` deep links |
 | `summary` | no | Short paragraph under the title |
 | `tags` | no | Any of `new`, `improved`, `fixed`; rendered as badges |
-| `image` | no | Screenshot path relative to `entries/`, must exist |
+| `image` | no | Screenshot path relative to `data/`, must exist |
 | `sections` | no | Headed bullet lists |
 | `links` | no | Related commits or PRs |
 
 ## Screenshots
 
-Drop images in `entries/assets/` and reference them as `assets/<name>.png` in the entry. The build copies them to `site/assets/`.
+Drop images in `data/assets/` and reference them as `assets/<name>.png` in the entry. The build copies them to `site/assets/`.
 
 ## Repo Layout
 
 ```
-entries/          one JSON file per version, plus assets/
-schema/           entry.schema.json, the entry shape
-scripts/          build.mjs (compile + validate), new-entry.mjs (scaffold)
-site/             static page; entries.json and assets/ are build output
+data/months/YYYY-MM/   one JSON file per version, filed by release month
+data/assets/           screenshots referenced by entries
+schema/                entry.schema.json, the entry shape
+scripts/               build.mjs (compile + validate), new-entry.mjs (scaffold)
+site/                  static page; entries.json and assets/ are build output
 ```
 
 `site/entries.json` and `site/assets/` are generated and gitignored.
