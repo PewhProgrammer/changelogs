@@ -69,6 +69,10 @@ site/                  static page; entries.json and assets/ are build output
 
 `site/entries.json` and `site/assets/` are generated and gitignored.
 
+## Hosting
+
+Every push to `main` builds and deploys the site to GitHub Pages via `.github/workflows/deploy-pages.yml` (source: GitHub Actions, enabled on first run). The site is fully relative, so it works under the `/changelogs/` subpath.
+
 ## Phase 2
 
-Not in this repo yet: hosting (GitHub Pages), a subdomain, a deploy workflow, and automated cross repo entry ingestion.
+Not in this repo yet: a custom subdomain and automated cross repo entry ingestion.
