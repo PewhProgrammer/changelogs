@@ -1,0 +1,43 @@
+{
+  "version": "0.3.0",
+  "date": "2026-07-24",
+  "title": "Personal records from Garmin lap splits",
+  "repo": "plain-personal",
+  "summary": "Race efforts embedded inside longer runs now count as personal records.",
+  "tags": ["new", "improved", "fixed"],
+  "image": "assets/0.3.0-running-prs.jpg",
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Best effort times are derived from Garmin lap splits, so a race inside a longer run counts as a PR"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "PR bucket tolerance widened from 2% to 5% so near distance efforts land in the right bucket"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Running events that match an actual Garmin run are no longer duplicated"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit 7305693",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/730569311594383323079243827428fa4321a69b"
+    },
+    {
+      "label": "Commit d4c9761",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/d4c9761c1ab01350396e76506fbd4146a58b3046"
+    },
+    {
+      "label": "Commit f634a5d",
+      "url": "https://github.com/PewhProgrammer/plain-personal/commit/f634a5d3c9f20f285e388b0656c08bf98213d021"
+    }
+  ]
+}

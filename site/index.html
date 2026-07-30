@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Changelog</title>
+  <meta name="description" content="What shipped across my projects, version by version.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="changelog.css">
+</head>
+<body>
+  <header class="masthead">
+    <h1>Changelog</h1>
+    <p>What shipped across my projects, version by version.</p>
+  </header>
+  <nav class="filters" id="filters" aria-label="Filter by repository" hidden></nav>
+  <div class="layout">
+    <nav class="rail" aria-label="Versions">
+      <ol id="rail"></ol>
+    </nav>
+    <main id="entries" aria-busy="true"></main>
+  </div>
+  <noscript>
+    <p class="load-error">This changelog needs JavaScript to render entries.json.</p>
+  </noscript>
+  <script src="changelog.js"></script>
+</body>
+</html>
