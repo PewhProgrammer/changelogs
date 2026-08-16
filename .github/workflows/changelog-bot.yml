@@ -1,0 +1,163 @@
+name: Changelog Bot
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: changelog-bot
+  cancel-in-progress: false
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout changelogs
+        uses: actions/checkout@v4
+        with:
+          path: changelogs
+          fetch-depth: 0
+
+      - name: Configure git identity
+        working-directory: changelogs
+        run: |
+          git config user.name "changelog-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Clone tracked repos
+        env:
+          CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
+        run: |
+          mkdir -p work
+          for r in kaizen.pewh infra stunning-doodle rocky-agent; do
+            git clone --quiet \
+              "https://x-access-token:${CROSS_REPO_PAT}@github.com/PewhProgrammer/${r}.git" \
+              "work/${r}"
+          done
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run Claude to update changelog
+        uses: anthropics/claude-code-action@v1.0.193
+        with:
+          use_bedrock: "true"
+          claude_args: |
+            --model ${{ secrets.BEDROCK_MODEL_ID }}
+            --max-turns 40
+            --allowed-tools "Bash,Read,Write,Edit,Glob,Grep"
+          prompt: |
+            You are maintaining the changelog repo at ./changelogs (this is a git
+            checkout of PewhProgrammer/changelogs, already on main, already has
+            git user.name/user.email configured). Four other repos have been
+            cloned read-only as siblings: ./work/kaizen.pewh, ./work/infra,
+            ./work/stunning-doodle, ./work/rocky-agent.
+
+            Read ./changelogs/AGENTS.md in full and follow it exactly for
+            versioning, entry format, and commit conventions. Everything below
+            is additional context specific to this automated run, it doesn't
+            override AGENTS.md, it tells you how to apply it here.
+
+            Read ./changelogs/.changelog-state.json. It has one entry per
+            tracked repo with a "lastProcessedSha" from the previous run.
+
+            For each of the 4 repos, in this order: kaizen.pewh, infra,
+            stunning-doodle, rocky-agent:
+
+            1. Run `git -C work/<repo> log <lastProcessedSha>..HEAD --stat` to
+               see what's new. If there's nothing new (HEAD equals
+               lastProcessedSha), skip it.
+            2. Actually inspect the commits and diffs (`git -C work/<repo> show
+               <sha>` etc as needed) rather than judging from subject lines
+               alone.
+            3. Skip this repo entirely — write no file, make no commit — if the
+               only new commits are, individually or collectively, not
+               user-visible: dependency/lockfile bumps, CI/workflow config
+               changes, merge commits with no substantive diff, formatting or
+               lint-only changes, typo fixes with no behavior change,
+               README/comment-only edits, or version-bump commits with no
+               accompanying feature work. A quiet period where nothing shipped
+               is the correct and expected outcome, do not manufacture an entry
+               to have something to log. Under-reporting is safe here,
+               inventing or padding content is not.
+            4. If there is genuine user-visible shipped work (a new feature, a
+               real bug fix affecting behavior, a meaningful improvement),
+               write exactly one entry for it in ./changelogs following
+               AGENTS.md: re-list data/months/ immediately before picking the
+               version (don't reuse a version number you computed earlier in
+               this same run for a different repo), use
+               scripts/new-entry.mjs, fill every field from the real commits
+               only, set "repo" to the exact string "<repo>" as it appears in
+               the work/ directory name, and use full commit SHAs in "links"
+               pointing to https://github.com/PewhProgrammer/<repo>/commit/<sha>.
+               Do not attempt screenshots, "image" stays unset for this
+               automated run.
+            5. Run `node scripts/build.mjs` inside ./changelogs. It must exit
+               0. If it doesn't, fix the entry (never weaken validation) or
+               abandon that entry if you can't make it truthful and valid.
+            6. If the entry is valid, commit it inside ./changelogs with
+               `git add data/` and a commit message in the style
+               `feat: add <version> entry for <repo>`. Do not run `git push`,
+               something else handles that after you're done.
+
+            When all 4 repos are processed, write a JSON summary to the path
+            given by the environment variable RUNNER_TEMP, filename
+            changelog-run-summary.json, shaped like:
+            {"kaizen.pewh":{"action":"skipped","reason":"..."},
+             "infra":{"action":"entry","version":"0.6.1"},
+             "stunning-doodle":{"action":"skipped","reason":"..."},
+             "rocky-agent":{"action":"entry","version":"0.6.2"}}
+            Use "action":"skipped" or "action":"entry" for every one of the 4
+            repos, no exceptions, even if you made no commits at all this run.
+            Do not commit this summary file, it lives outside the changelogs
+            git checkout's tracked files.
+
+      - name: Update state file and push
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          summary="${RUNNER_TEMP}/changelog-run-summary.json"
+          if [ ! -f "$summary" ]; then
+            echo "No run summary found at $summary, nothing to update, exiting."
+            exit 0
+          fi
+
+          node <<'EOF'
+          const fs = require('fs');
+          const summaryPath = process.env.RUNNER_TEMP + '/changelog-run-summary.json';
+          const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+          const statePath = 'changelogs/.changelog-state.json';
+          const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+          const { execSync } = require('child_process');
+          const now = new Date().toISOString();
+
+          for (const repo of Object.keys(state.repos)) {
+            const headSha = execSync(`git -C work/${repo} rev-parse HEAD`).toString().trim();
+            const result = summary[repo];
+            state.repos[repo].lastProcessedSha = headSha;
+            state.repos[repo].lastRunAt = now;
+            state.repos[repo].lastResult = result
+              ? (result.action === 'entry' ? `entry:${result.version}` : `skipped:${result.reason}`)
+              : 'no-summary';
+          }
+
+          fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+          EOF
+
+          cd changelogs
+          git add .changelog-state.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore: update changelog-state after $(date -u +%Y-%m-%d) run"
+          git push origin HEAD:main
