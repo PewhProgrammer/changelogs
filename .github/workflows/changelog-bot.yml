@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: changelog-bot
@@ -162,3 +163,8 @@ jobs:
           fi
           git commit -m "chore: update changelog-state after $(date -u +%Y-%m-%d) run"
           git push origin HEAD:main
+
+      - name: Trigger site deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: gh workflow run "Deploy Changelog" --repo "${{ github.repository }}"
