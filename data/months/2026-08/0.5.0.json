@@ -1,0 +1,47 @@
+{
+  "version": "0.5.0",
+  "date": "2026-08-16",
+  "title": "PWA support and mobile responsive dashboard",
+  "repo": "kaizen.pewh",
+  "summary": "Dashboard can now be installed as a standalone app and works properly on mobile devices.",
+  "tags": [
+    "new",
+    "improved",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Dashboard can be installed as a PWA with service worker and manifest for standalone use on Android"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Dashboard is now mobile responsive with fixed overflow on events dialog, month strip, and layout padding",
+        "Login page now features a split-layout design with brand panel and geometric pattern"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Logo now displays correctly on login page by serving it without authentication"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "PWA and mobile responsive",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/c8b0da685eaf01105bddb6aa4951215f396666e2"
+    },
+    {
+      "label": "Login page redesign",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/129956297dca802260e06218421cdd2281bce228"
+    },
+    {
+      "label": "Logo auth fix",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/cc3bfa7704166db14f18324af6746099ffb0225e"
+    }
+  ]
+}
