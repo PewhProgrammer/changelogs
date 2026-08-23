@@ -29,15 +29,10 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
 
       - name: Clone tracked repos
+        working-directory: changelogs
         env:
           CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
-        run: |
-          mkdir -p work
-          for r in kaizen.pewh infra stunning-doodle rocky-agent; do
-            git clone --quiet \
-              "https://x-access-token:${CROSS_REPO_PAT}@github.com/PewhProgrammer/${r}.git" \
-              "work/${r}"
-          done
+        run: node scripts/sync-repos.mjs
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -55,32 +50,34 @@ jobs:
           use_bedrock: "true"
           show_full_output: "true"
           claude_args: |
-            --max-turns 40
+            --max-turns 100
             --allowed-tools "Bash,Read,Write,Edit,Glob,Grep"
           prompt: |
             You are maintaining the changelog repo at ./changelogs (this is a git
             checkout of PewhProgrammer/changelogs, already on main, already has
-            git user.name/user.email configured). Four other repos have been
-            cloned read-only as siblings: ./work/kaizen.pewh, ./work/infra,
-            ./work/stunning-doodle, ./work/rocky-agent.
+            git user.name/user.email configured, already has the 4 tracked repos
+            cloned as read-only siblings at ./work/kaizen.pewh, ./work/infra,
+            ./work/stunning-doodle, ./work/rocky-agent). Run all commands below
+            with ./changelogs as your working directory unless a path says
+            otherwise.
 
-            Read ./changelogs/AGENTS.md in full and follow it exactly for
-            versioning, entry format, and commit conventions. Everything below
-            is additional context specific to this automated run, it doesn't
-            override AGENTS.md, it tells you how to apply it here.
-
-            Read ./changelogs/.changelog-state.json. It has one entry per
-            tracked repo with a "lastProcessedSha" from the previous run.
+            Read AGENTS.md in full and follow it exactly for entry format and
+            commit conventions. Everything below is additional context specific
+            to this automated run, and tells you how to apply AGENTS.md here,
+            using a set of helper scripts instead of raw git commands so the
+            bookkeeping stays consistent across a long run.
 
             For each of the 4 repos, in this order: kaizen.pewh, infra,
             stunning-doodle, rocky-agent:
 
-            1. Run `git -C work/<repo> log <lastProcessedSha>..HEAD --stat` to
-               see what's new. If there's nothing new (HEAD equals
-               lastProcessedSha), skip it.
-            2. Actually inspect the commits and diffs (`git -C work/<repo> show
-               <sha>` etc as needed) rather than judging from subject lines
-               alone.
+            1. Run `node scripts/repo-diff.mjs <repo>`. It prints JSON:
+               `{ repo, from, to, hasChanges, commits: [{ sha, author, date,
+               subject, filesChanged }] }`. If `hasChanges` is false, run
+               `node scripts/write-summary.mjs <repo> --skip "no new commits"`
+               and move to the next repo.
+            2. Actually inspect the commits and diffs (`git -C ../work/<repo>
+               show <sha>` etc as needed) rather than judging from subject
+               lines alone.
             3. Skip this repo entirely — write no file, make no commit — if the
                only new commits are, individually or collectively, not
                user-visible: dependency/lockfile bumps, CI/workflow config
@@ -90,38 +87,39 @@ jobs:
                accompanying feature work. A quiet period where nothing shipped
                is the correct and expected outcome, do not manufacture an entry
                to have something to log. Under-reporting is safe here,
-               inventing or padding content is not.
+               inventing or padding content is not. If skipping, run
+               `node scripts/write-summary.mjs <repo> --skip "<reason>"` and
+               move to the next repo.
             4. If there is genuine user-visible shipped work (a new feature, a
-               real bug fix affecting behavior, a meaningful improvement),
-               write exactly one entry for it in ./changelogs following
-               AGENTS.md: re-list data/months/ immediately before picking the
-               version (don't reuse a version number you computed earlier in
-               this same run for a different repo), use
-               scripts/new-entry.mjs, fill every field from the real commits
-               only, set "repo" to the exact string "<repo>" as it appears in
-               the work/ directory name, and use full commit SHAs in "links"
-               pointing to https://github.com/PewhProgrammer/<repo>/commit/<sha>.
-               Do not attempt screenshots, "image" stays unset for this
-               automated run.
-            5. Run `node scripts/build.mjs` inside ./changelogs. It must exit
-               0. If it doesn't, fix the entry (never weaken validation) or
-               abandon that entry if you can't make it truthful and valid.
-            6. If the entry is valid, commit it inside ./changelogs with
-               `git add data/` and a commit message in the style
-               `feat: add <version> entry for <repo>`. Do not run `git push`,
-               something else handles that after you're done.
+               real bug fix affecting behavior, a meaningful improvement):
+               a. Decide the bump type per AGENTS.md (feature work = minor, a
+                  batch of small fixes = patch), then run
+                  `node scripts/next-version.mjs <major|minor|patch>` to get
+                  the version. Always use this script, never compute the
+                  version by hand, it already accounts for entries written
+                  earlier in this same run for other repos.
+               b. Run `node scripts/new-entry.mjs <version>`, then fill in the
+                  stub file it created: every field sourced from the real
+                  commits only, "repo" set to the exact string "<repo>" as it
+                  appears in the work/ directory name, and full commit SHAs in
+                  "links" pointing to
+                  https://github.com/PewhProgrammer/<repo>/commit/<sha>. Do not
+                  attempt screenshots, "image" stays unset for this automated
+                  run.
+               c. Run `node scripts/build.mjs`. It must exit 0. If it doesn't,
+                  fix the entry (never weaken validation) or abandon it if you
+                  can't make it truthful and valid.
+               d. If valid, commit it with `git add data/` and a commit message
+                  in the style `feat: add <version> entry for <repo>`. Do not
+                  run `git push`, something else handles that after you're
+                  done.
+               e. Run
+                  `node scripts/write-summary.mjs <repo> --entry <version>`.
 
-            When all 4 repos are processed, write a JSON summary to the path
-            given by the environment variable RUNNER_TEMP, filename
-            changelog-run-summary.json, shaped like:
-            {"kaizen.pewh":{"action":"skipped","reason":"..."},
-             "infra":{"action":"entry","version":"0.6.1"},
-             "stunning-doodle":{"action":"skipped","reason":"..."},
-             "rocky-agent":{"action":"entry","version":"0.6.2"}}
-            Use "action":"skipped" or "action":"entry" for every one of the 4
-            repos, no exceptions, even if you made no commits at all this run.
-            Do not commit this summary file, it lives outside the changelogs
-            git checkout's tracked files.
+            Write the summary for each repo immediately after you finish
+            processing it (step 1 or step 4e above), not saved up for the end.
+            That way if you run out of turns partway through, the repos you
+            did finish are still recorded correctly.
 
       - name: Update state file and push
         env:

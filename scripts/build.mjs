@@ -2,6 +2,7 @@ import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promi
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { compareVersionsDesc } from './lib/versions.mjs'
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const dataDir = path.join(root, 'data')
@@ -179,25 +180,6 @@ for (const { month, name } of files) {
 if (errors.length > 0) {
   for (const error of errors) console.error(error)
   process.exit(1)
-}
-
-function compareVersionsDesc(a, b) {
-  const aParts = a.split('.')
-  const bParts = b.split('.')
-  const length = Math.max(aParts.length, bParts.length)
-  for (let i = 0; i < length; i += 1) {
-    const aPart = aParts[i] ?? '0'
-    const bPart = bParts[i] ?? '0'
-    const aNumber = Number(aPart)
-    const bNumber = Number(bPart)
-    if (Number.isNaN(aNumber) || Number.isNaN(bNumber)) {
-      const compared = bPart.localeCompare(aPart)
-      if (compared !== 0) return compared
-    } else if (aNumber !== bNumber) {
-      return bNumber - aNumber
-    }
-  }
-  return 0
 }
 
 entries.sort((a, b) => b.date.localeCompare(a.date) || compareVersionsDesc(a.version, b.version))
