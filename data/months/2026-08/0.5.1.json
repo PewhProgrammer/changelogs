@@ -1,0 +1,26 @@
+{
+  "version": "0.5.1",
+  "date": "2026-08-17",
+  "title": "Improved error handling and reliability",
+  "repo": "rocky-agent",
+  "summary": "Agent loop now handles LLM failures and malformed tool calls gracefully instead of crashing.",
+  "tags": [
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "Fixed",
+      "items": [
+        "Agent now returns user-facing error messages instead of crashing silently on API timeouts and failures",
+        "Malformed tool arguments from the model are now handled gracefully without breaking the agent loop",
+        "Tool execution failures (S3, external APIs) are now reported to the model as errors instead of crashing"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Error handling improvements",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/eb2b14db65f26372f1f2c3c028e1961ca327d024"
+    }
+  ]
+}
