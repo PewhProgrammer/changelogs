@@ -1,0 +1,37 @@
+{
+  "version": "0.7.0",
+  "date": "2026-08-29",
+  "title": "Scheduled email checks with smart filtering",
+  "repo": "rocky-agent",
+  "summary": "Scheduled jobs can now check email automatically, filtering spam and promotions, then summarizing what needs attention.",
+  "tags": [
+    "new",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "[email] directive for scheduled jobs checks Gmail automatically",
+        "Smart filtering by category labels and sender ignore list",
+        "LLM-powered email summarization with Slack notifications"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Rocky now uses Gmail tools to check email instead of giving setup advice"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit fd653f9",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/fd653f99fdea095dfe705698f2043a45d164c820"
+    },
+    {
+      "label": "Commit a1eff2d",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/a1eff2d37d9119e8f4fbcb9d34658b429cc4d535"
+    }
+  ]
+}
