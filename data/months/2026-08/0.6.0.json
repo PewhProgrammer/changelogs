@@ -1,0 +1,31 @@
+{
+  "version": "0.6.0",
+  "date": "2026-08-29",
+  "title": "Editorial listings redesign with sidebar navigation",
+  "repo": "stunning-doodle",
+  "summary": "Dashboard rebuilt with a desktop sidebar app shell and a bright editorial 'what's on' visual style.",
+  "tags": [
+    "improved"
+  ],
+  "sections": [
+    {
+      "heading": "Improved",
+      "items": [
+        "Sidebar navigation on desktop with wordmark, nav links, and user menu",
+        "Editorial visual style with bright paper, serif titles, and cobalt accents",
+        "Upcoming events displayed as featured lead with grid layout",
+        "Task bar appears only when actions are pending"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit e642860",
+      "url": "https://github.com/PewhProgrammer/stunning-doodle/commit/e64286075b9dbc6faf5e7045c212ce99b303ec91"
+    },
+    {
+      "label": "Commit e14d193",
+      "url": "https://github.com/PewhProgrammer/stunning-doodle/commit/e14d1936c4a5c221a75c3eb83654fee59c51a71e"
+    }
+  ]
+}
