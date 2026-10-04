@@ -2,7 +2,7 @@ name: Changelog Bot
 
 on:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '23 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,32 @@ jobs:
           CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
         run: node scripts/sync-repos.mjs
 
+      - name: Detect new commits
+        id: detect
+        working-directory: changelogs
+        run: |
+          set -euo pipefail
+          node <<'EOF'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const state = JSON.parse(fs.readFileSync('.changelog-state.json', 'utf8'));
+          const changed = [];
+
+          for (const repo of Object.keys(state.repos)) {
+            const diff = JSON.parse(execFileSync('node', ['scripts/repo-diff.mjs', repo], { encoding: 'utf8' }));
+            if (diff.hasChanges) {
+              console.log(`${repo}: ${diff.commits.length} new commits`);
+              changed.push(repo);
+            } else {
+              execFileSync('node', ['scripts/write-summary.mjs', repo, '--skip', 'no new commits'], { stdio: 'inherit' });
+            }
+          }
+
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `repos=${changed.join(' ')}\nany=${changed.length > 0}\n`);
+          EOF
+
       - name: Configure AWS credentials
+        if: steps.detect.outputs.any == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -43,6 +68,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Run Claude to update changelog
+        if: steps.detect.outputs.any == 'true'
         uses: anthropics/claude-code-action@v1.0.193
         env:
           ANTHROPIC_MODEL: ${{ secrets.BEDROCK_MODEL_ID }}
@@ -51,16 +77,17 @@ jobs:
           use_bedrock: "true"
           show_full_output: "true"
           claude_args: |
-            --max-turns 100
+            --max-turns 40
             --allowed-tools "Bash,Read,Write,Edit,Glob,Grep"
           prompt: |
-            You are maintaining the changelog repo at ./changelogs (this is a git
-            checkout of PewhProgrammer/changelogs, already on main, already has
-            git user.name/user.email configured, already has the 4 tracked repos
-            cloned as read-only siblings at ./work/kaizen.pewh, ./work/infra,
-            ./work/stunning-doodle, ./work/rocky-agent). Run all commands below
-            with ./changelogs as your working directory unless a path says
-            otherwise.
+            You are maintaining the changelog repo at
+            ${{ github.workspace }}/changelogs (a git checkout of
+            PewhProgrammer/changelogs, already on main, git user.name/user.email
+            already configured). The tracked repos are cloned read-only at
+            ${{ github.workspace }}/work/<repo>. Start by running
+            `cd ${{ github.workspace }}/changelogs` and run every command below
+            from there. Do not explore the filesystem to find these paths, they
+            are exact.
 
             Read AGENTS.md in full and follow it exactly for entry format and
             commit conventions. Everything below is additional context specific
@@ -68,14 +95,13 @@ jobs:
             using a set of helper scripts instead of raw git commands so the
             bookkeeping stays consistent across a long run.
 
-            For each of the 4 repos, in this order: kaizen.pewh, infra,
-            stunning-doodle, rocky-agent:
+            Only these repos have new commits since the last run, process each
+            of them in this order: ${{ steps.detect.outputs.repos }}
+            (the others are already recorded as skipped, do not touch them):
 
             1. Run `node scripts/repo-diff.mjs <repo>`. It prints JSON:
                `{ repo, from, to, hasChanges, commits: [{ sha, author, date,
-               subject, filesChanged }] }`. If `hasChanges` is false, run
-               `node scripts/write-summary.mjs <repo> --skip "no new commits"`
-               and move to the next repo.
+               subject, filesChanged }] }`.
             2. Actually inspect the commits and diffs (`git -C ../work/<repo>
                show <sha>` etc as needed) rather than judging from subject
                lines alone.
@@ -123,6 +149,7 @@ jobs:
             did finish are still recorded correctly.
 
       - name: Update state file and push
+        if: steps.detect.outputs.any == 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -165,6 +192,7 @@ jobs:
           git push origin HEAD:main
 
       - name: Trigger site deploy
+        if: steps.detect.outputs.any == 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: gh workflow run "Deploy Changelog" --repo "${{ github.repository }}"
