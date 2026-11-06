@@ -1,0 +1,45 @@
+{
+  "version": "0.8.0",
+  "date": "2026-11-06",
+  "title": "Calendar events and screenshot OCR",
+  "repo": "rocky-agent",
+  "summary": "Rocky can now create Google Calendar events and read text from screenshots attached to Slack messages.",
+  "tags": [
+    "new",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Rocky can create Google Calendar events for reminders and schedule delegated decisions",
+        "Screenshots attached to Slack messages are read via OCR so Rocky can respond to visual content"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Document classification now correctly splits house vs estate statements",
+        "Empty model replies are retried instead of posting 'No response.'"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Calendar events",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/4327f26e7d172a7e75c03d483a83615c7321046c"
+    },
+    {
+      "label": "OCR for screenshots",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/fda2bc8050caeb42aca0ba14c39946286cbd740c"
+    },
+    {
+      "label": "Fix document classification",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/095152352018ac17d7a4ea349959b4315b2e3afd"
+    },
+    {
+      "label": "Fix empty reply retry",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/94eb751009e5991141fd5cc02ecd78bade915bdd"
+    }
+  ]
+}
