@@ -1,0 +1,51 @@
+{
+  "version": "0.9.0",
+  "date": "2026-11-06",
+  "title": "Public Baden-Baden trip planning page with accommodation voting",
+  "repo": "kaizen.pewh",
+  "summary": "Friends can now vote on accommodation for the Baden-Baden trip from a public shareable page.",
+  "tags": [
+    "new",
+    "improved",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Public trip planning page at /pool/baden-baden-2026 with accommodation voting from a floating panel",
+        "Vote progress bar shows how many friends have voted for each accommodation option"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Baden-Baden trip page is now mobile-responsive with a full-width voting bar that opens as a bottom sheet on smaller screens"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Service worker no longer hijacks the cozy office iframe navigation"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Host public Baden-Baden trip page",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/b02c6861e28a28313e25b7321bb74363a6f2200e"
+    },
+    {
+      "label": "Add accommodation voting",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/5a4b76eac370cf49c89ff26e7e5328951c4eddcd"
+    },
+    {
+      "label": "Mobile responsive design",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/1729dab6837d58c31455196e3dcc38afb57dc28f"
+    },
+    {
+      "label": "Service worker iframe fix",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/a04c72163cbebdfdbd75643779eec9f211cf1c19"
+    }
+  ]
+}
