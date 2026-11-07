@@ -1,0 +1,57 @@
+{
+  "version": "0.10.0",
+  "date": "2026-11-07",
+  "title": "Email automation with calculator and document filing",
+  "repo": "rocky-agent",
+  "summary": "Rocky can now file email attachments directly from Gmail, has a calculator tool, and sends smarter email digests with only actionable items.",
+  "tags": [
+    "new",
+    "improved",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "File PDF attachments directly from Gmail with email-based filing",
+        "Property manager email attachments are automatically filed through the document pipeline",
+        "Calculator tool that forbids mental arithmetic in all financial calculations"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Email digest now only reports emails that need action, filtering out security alerts and Google sign-in notices",
+        "Emails are rendered as emoji action indicators with direct Gmail links instead of full summaries"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Protokoll (meeting minutes) are now filed under their meeting year instead of the plan period year"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "File PDF attachments from Gmail",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/2148c616cb505d568e0496b56813b91f42822f84"
+    },
+    {
+      "label": "File property manager attachments in daily email job",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/fa656c6b31fd499e869e9bcb72bf283d8a1c1add"
+    },
+    {
+      "label": "Add calculator tool",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/20333810bbe89613f3f2f9e9da717be11805ea0e"
+    },
+    {
+      "label": "Fix Protokoll year classification",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/bf7e2a911968e094b25d1938c2cd8a8c7a3729bd"
+    },
+    {
+      "label": "Smart email digest with actionable items only",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/3bb1b9fa2700fbd35228e6d763ccf890285481d2"
+    }
+  ]
+}
