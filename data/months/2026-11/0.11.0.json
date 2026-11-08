@@ -1,0 +1,50 @@
+{
+  "version": "0.11.0",
+  "date": "2026-11-08",
+  "title": "Tech reads digest with engineering blogs and quality filters",
+  "repo": "rocky-agent",
+  "summary": "The digest now pulls from engineering blogs alongside Reddit and HN, with improved ranking and parallel batch summarization. Replies to email job posts now load linked emails for context.",
+  "tags": [
+    "new",
+    "improved",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Tech reads digest powered by Reddit, Hacker News, and engineering blogs (Claude, Cloudflare, Netflix, GitHub, Slack, Meta and others)",
+        "Digest now interactively ranks posts with per-source quotas so blogs cannot crowd out Reddit"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Refocused digest on code review, infra and reliability; dropped databases, self-promotion and self-hosting",
+        "Batch summarization in groups of four to prevent the model from stopping early",
+        "Replaced category/source fields with favicon and category icons for cleaner layout"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Replies to email job posts now automatically read linked emails to provide context",
+        "Stopped falsely reporting successful calendar events when the API call actually failed"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Tech reads digest initial launch",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/ea00191d398208af6780da00a7f0509b08b8e3f1"
+    },
+    {
+      "label": "Digest rework with blogs and filters",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/63ad89fbadf23d3470934780134c4eeb3b251340"
+    },
+    {
+      "label": "Email context and calendar fix",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/4b206f265512438c0fec5588df82b05b7a4984e0"
+    }
+  ]
+}
