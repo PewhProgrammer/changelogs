@@ -1,0 +1,48 @@
+{
+  "version": "0.12.0",
+  "date": "2026-11-08",
+  "title": "Research reports rebuilt on Claude with fact-checking",
+  "repo": "rocky-agent",
+  "summary": "The web research digest now runs on Claude Sonnet 4.5 with keyless search tools, featuring sourced fact-checking and editor passes to prevent misattribution.",
+  "tags": [
+    "new",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Research agent rebuilt on Claude Sonnet 4.5 with keyless tools: HN full-text search and comments, engineering blog feeds, GitHub issues, arXiv, HTML/PDF reading",
+        "Prompt caching reduces cost per report from ~$3 to ~$0.50",
+        "20s timeout on tool calls to prevent PDF extraction hangs"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Reports fact-checked against cited sources to prevent misattribution and false claims",
+        "Editor pass runs on Opus 4.5 for stronger accuracy on detail alignment between similar sources",
+        "Research timeout increased to accommodate the fact-checking editor",
+        "HN keyword search excludes launches and self-promotion to improve signal"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Rebuild research on Claude",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/95cfefca1c33509b0c2a8a763afd808665415ebd"
+    },
+    {
+      "label": "Fact check against sources",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/92f9beb57417dd0251cc83b6138142c9d9da774a"
+    },
+    {
+      "label": "Ground research reports",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/e5b9db5bfc5f61b76f882139176a8a7512773cba"
+    },
+    {
+      "label": "Use Opus for fact checking",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/834af152668226281035e50fc981f3d3911c4b76"
+    }
+  ]
+}
