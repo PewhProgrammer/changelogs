@@ -1,0 +1,51 @@
+{
+  "version": "0.13.0",
+  "date": "2026-11-12",
+  "title": "Cozy office character animations",
+  "repo": "kaizen.pewh",
+  "summary": "Characters now walk in eight directions with drawn sprite atlases, sit, sleep, and perform workouts with new poses.",
+  "tags": [
+    "new",
+    "improved"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Walk cycles with 8 directional facings using SpriteCast-generated sprite atlases",
+        "Sitting and sleeping poses for characters",
+        "Squat animation with four depths for workout sequences",
+        "Sprite asset generation pipeline with documentation, rigs, design references and helper tools"
+      ]
+    },
+    {
+      "heading": "Improved",
+      "items": [
+        "Characters route around furniture instead of walking through it",
+        "Sprite sizing and positioning optimizations for better visual balance"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Walk cycles commit",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/1c94eb47a7e0ea1872e67452a0d00ed913838d07"
+    },
+    {
+      "label": "Sitting and sleeping poses",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/92bf52efc042d3a714363d61f0635c51fb0ce26c"
+    },
+    {
+      "label": "Squat animation",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/ea27e289fde90e0055ae63d4423b21368e29a8be"
+    },
+    {
+      "label": "Collision routing",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/798b21f7063b41f7a781b1c5b92583614bc87ea0"
+    },
+    {
+      "label": "Sprite pipeline documentation",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/32cdeac7a632ed3f93a579f927c66bf6a110f290"
+    }
+  ]
+}
