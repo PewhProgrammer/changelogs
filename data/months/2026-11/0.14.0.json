@@ -1,0 +1,25 @@
+{
+  "version": "0.14.0",
+  "date": "2026-11-15",
+  "title": "Vacation calendar year toggle",
+  "repo": "kaizen.pewh",
+  "summary": "The vacation calendar can now switch between the current year and next year, refetching all data accordingly.",
+  "tags": [
+    "new"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Vacation calendar now includes a toggle to view current year or next year",
+        "Import functionality now replaces only the selected year instead of wiping all years"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit afb4924",
+      "url": "https://github.com/PewhProgrammer/kaizen.pewh/commit/afb492472378841ceb7e182e296780086517dfee"
+    }
+  ]
+}
