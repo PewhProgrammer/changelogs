@@ -1,0 +1,34 @@
+{
+  "version": "0.15.0",
+  "date": "2026-11-15",
+  "title": "Rocky's agent loop now runs on Claude",
+  "repo": "rocky-agent",
+  "summary": "Switched Rocky's agent loop to Claude Sonnet 4.5 with prompt caching, fixing document reading and calculation issues.",
+  "tags": [
+    "new",
+    "fixed"
+  ],
+  "sections": [
+    {
+      "heading": "New",
+      "items": [
+        "Agent loop runs on Claude Sonnet 4.5 via Anthropic SDK with prompt caching (Haiku 4.5 for scheduled jobs)",
+        "Monthly figures (Hausgeld, rent, loan) now tracked in finances/<propertyId>.json with get/set tools and scheduled effective_from dates"
+      ]
+    },
+    {
+      "heading": "Fixed",
+      "items": [
+        "Documents are now fully read (up to 20000 chars) instead of stopping at 5000, fixing incorrect Hausgeld calculations",
+        "Thread source tools store verbatim results and replay them on follow-ups so Rocky checks earlier replies against what it read",
+        "Calculator now keeps full precision instead of rounding ratios to cents"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Commit 2d1ab5a",
+      "url": "https://github.com/PewhProgrammer/rocky-agent/commit/2d1ab5a30a2fab8806375cecf15841c9d455d679"
+    }
+  ]
+}
